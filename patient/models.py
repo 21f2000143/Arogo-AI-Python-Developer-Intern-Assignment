@@ -19,7 +19,7 @@ class User(AbstractUser):
     contact = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return f"{self.username} ({self.user_type})"
+        return f"{self.username} ({self.role})"
 
 
 class PatientProfile(models.Model):
@@ -49,9 +49,9 @@ class MedicalRecord(models.Model):
         return f"Report for {self.doctor_name} on {self.visit_date.date()}"
 
 
-class DoctorAvailability(models.Model):
+class DoctorSlot(models.Model):
     doctor = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="availability")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="slots")
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -74,11 +74,11 @@ class Appointment(models.Model):
     ]
 
     patient = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="appointments")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="patient_appointments")
     doctor = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="doctor_appointments")
-    availability = models.OneToOneField(
-        DoctorAvailability, on_delete=models.CASCADE, related_name="appointment")
+    slot = models.ForeignKey(
+        DoctorSlot, on_delete=models.CASCADE, related_name="appointments")
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="booked")
     booked_at = models.DateTimeField(auto_now_add=True)

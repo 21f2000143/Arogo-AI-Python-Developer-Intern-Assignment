@@ -1,4 +1,4 @@
-# Feedback Report Generator
+# Clinic360
 
 ## Setup & Run
 
@@ -16,8 +16,8 @@
 
 1. **Clone the repository**
    ```sh
-   git clone https://github.com/21f2000143/feedback_report_generator.git
-   cd feedback_report_generator
+   https://github.com/21f2000143/Arogo-AI-Python-Developer-Intern-Assignment.git
+   cd Arogo-AI-Python-Developer-Intern-Assignment
    ```
 
 2. **Setup and Start Docker Desktop on your machine**
@@ -45,120 +45,119 @@
 
 ## Endpoints
 
-### Generate HTML Report
+## API Endpoints
 
-- **URL:** `/assignment/html`
-- **Method:** `POST`
-- **Description:** Accepts JSON payload and returns a task_id for processing.
-- **Payload Example:** Input
-    ```json
-    [
-      {
-        "namespace": "ns_example",
-        "student_id": "00a9a76518624b02b0ed57263606fc26",
-        "events": [
-            {
-                "type": "saved_code",
-                "created_time": "2024-07-21 03:04:55.939000+00:00",
-                "unit": "17"
-            }
-        ]
-      }
-    ]
-    ```
-- **Response:** Output
-    ```json
-    {
-      "task_id": "a8646b3b-96db-4239-9298-51589c6d7340"
-    }
-    ```
+### User Management
 
-### Check HTML Task Status and Retrieve Report
+- **List Users**
+  - **URL:** `/user/`
+  - **Method:** `GET`
+  - **Description:** Retrieve a list of all users.
 
-- **URL:** `/assignment/html/<task_id>`
-- **Method:** `GET`
-- **Description:** Returns HTML content if completed else json response with task status.
-- **Examples:**
-- **Status:** SUCCESS.
-    ```json
-    {
-      "task_id": "6d2552c6-55d8-4562-92eb-c996a2ebbfed",
-      "status": "SUCCESS",
-      "html_content": "<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Assignment Report</title>\n</head>\n\n<body>\n    <div id=\"reports\">\n        \n        <div>\n            <h2>Student ID: 00a9a76518624b02b0ed57263606fc26</h2>\n            <p>Event Order: Q1</p>\n        </div>\n        \n    </div>\n</body>\n\n</html>\n"
-    }
-    ```
-- **Status:** PENDING.
-    ```json
-    {
-      "task_id": "4eb51705-5b30-4fc3-a81b-8d8eaeca2117",
-      "status": "PENDING"
-    }
-    ```
-- **Status:** FAILURE.
-    ```json
-    {
-      "task_id": "dd907d57-9a7a-4c46-84a6-05b2e231b893",
-      "status": "FAILURE",
-      "error": "division by zero"
-    }
-    ```
-### Generate PDF Report
+### Medical Records
 
-- **URL:** `/assignment/pdf`
-- **Method:** `POST`
-- **Description:** Accepts JSON payload and returns a task_id for processing.
-- **Payload Example:** Input
-    ```json
-    [
-      {
-        "namespace": "ns_example",
-        "student_id": "00a9a76518624b02b0ed57263606fc26",
-        "events": [
-            {
-                "type": "saved_code",
-                "created_time": "2024-07-21 03:04:55.939000+00:00",
-                "unit": "17"
-            }
-        ]
-      }
-    ]
-    ```
-- **Response:** Output
-    ```json
-    {
-      "task_id": "a8646b3b-96db-4239-9298-51589c6d7340"
-    }
-    ```
+- **Create Medical Record**
+  - **URL:** `/create-record/`
+  - **Method:** `POST`
+  - **Description:** Create a new medical record.
 
-### Check PDF Task Status and Retrieve Report
+- **View Patient Records**
+  - **URL:** `/view-records/<patient_id>/`
+  - **Method:** `GET`
+  - **Description:** Retrieve medical records for a specific patient.
 
-- **URL:** `/assignment/pdf/<task_id>`
-- **Method:** `GET`
-- **Description:** downloads PDF file if completed else json response with task status.
-- **Examples:**
-- **Status:** SUCCESS.
-  <img src="docs/pdfresult.png" width="300" height="100" />
-- **Status:** PENDING.
-    ```json
-    {
-      "task_id": "4eb51705-5b30-4fc3-a81b-8d8eaeca2117",
-      "status": "PENDING"
-    }
-    ```
-- **Status:** FAILURE.
-    ```json
-    {
-      "task_id": "dd907d57-9a7a-4c46-84a6-05b2e231b893",
-      "status": "FAILURE",
-      "error": "division by zero"
-    }
-    ```
+- **Update Medical Record**
+  - **URL:** `/update-record/<pk>/`
+  - **Method:** `PUT`
+  - **Description:** Update a specific medical record.
 
-## Assumptions and Design Decisions
+- **Delete Medical Record**
+  - **URL:** `/delete-record/<pk>/`
+  - **Method:** `DELETE`
+  - **Description:** Delete a specific medical record.
 
-- Efficient schema design for storing large HTML and PDF content. We are are okay with the default TOAST feature of Postgresql and Storing pdf files in the server file system.
-- Proper error handling and task retries configured from default(3) to (2) assuming we are dealing with large files.
-- For testing the api please use testing client which supports binary data(pdf) download or execute this url `/assignment/pdf/<task_id>` in browser.
+### Appointments
+
+- **Create Appointment**
+  - **URL:** `/create-appointment/`
+  - **Method:** `POST`
+  - **Description:** Create a new appointment.
+
+- **View Patient Appointments**
+  - **URL:** `/view-appointments/<patient_id>/`
+  - **Method:** `GET`
+  - **Description:** View all appointments for a specific patient.
+
+- **View Doctor Appointments**
+  - **URL:** `/view-doctor-appointments/<doctor_id>/`
+  - **Method:** `GET`
+  - **Description:** View all appointments for a specific doctor.
+
+- **Update Appointment**
+  - **URL:** `/update-appointment/<pk>/`
+  - **Method:** `PUT`
+  - **Description:** Update a specific appointment.
+
+- **Delete Appointment**
+  - **URL:** `/delete-appointment/<pk>/`
+  - **Method:** `DELETE`
+  - **Description:** Delete a specific appointment.
+
+### Doctor Slots
+
+- **Create Slot**
+  - **URL:** `/create-slot/`
+  - **Method:** `POST`
+  - **Description:** Create a new available slot for a doctor.
+
+- **View Doctor Slots**
+  - **URL:** `/view-slots/<doctor_id>/`
+  - **Method:** `GET`
+  - **Description:** View all available slots for a specific doctor.
+
+- **Update Slot**
+  - **URL:** `/update-slot/<pk>/`
+  - **Method:** `PUT`
+  - **Description:** Update a specific doctor's slot.
+
+- **Delete Slot**
+  - **URL:** `/delete-slot/<pk>/`
+  - **Method:** `DELETE`
+  - **Description:** Delete a specific doctor's slot.
+
+### Patient Registration
+
+- **Register Patient**
+  - **URL:** `/register-patient/`
+  - **Method:** `POST`
+  - **Description:** Register a new patient.
+
+- **Update Patient**
+  - **URL:** `/update-patient/<pk>/`
+  - **Method:** `PUT`
+  - **Description:** Update patient details.
+
+- **Delete Patient**
+  - **URL:** `/delete-patient/<pk>/`
+  - **Method:** `DELETE`
+  - **Description:** Delete a patient record.
+
+### Doctor Registration
+
+- **Register Doctor**
+  - **URL:** `/register-doctor/`
+  - **Method:** `POST`
+  - **Description:** Register a new doctor.
+
+- **Update Doctor**
+  - **URL:** `/update-doctor/<pk>/`
+  - **Method:** `PUT`
+  - **Description:** Update doctor details.
+
+- **Delete Doctor**
+  - **URL:** `/delete-doctor/<pk>/`
+  - **Method:** `DELETE`
+  - **Description:** Delete a doctor record.
 
 ---
 

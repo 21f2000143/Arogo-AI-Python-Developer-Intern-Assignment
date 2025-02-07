@@ -1,92 +1,110 @@
 <template>
-  <div class="row justify-content-center m-3 text-color-light">
-    <div class="card bg-light" style="width: 18rem;">
-      <div class="card-body">
-        <div class="d-flex justify-content-end">
-          <!-- Cross button to close the card -->
-          <button type="button" class="btn-close" aria-label="Close" @click="closeCard"></button>
+  <FormCompo>
+    <template v-slot:form>
+      <h5 class="card-title">Register Patient</h5>
+      <form @submit.prevent="submitForm">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" v-model="username" class="form-control" required>
         </div>
-        <h5 class="card-title">Sign up</h5>
-        <form @submit.prevent="submitForm">
-          <div class="mb-3">
-            <label class="form-label">Email address</label>
-            <input type="email" v-model="email" class="form-control" required>
-            <div v-if="message" class="alert alert-warning">
-              {{ message }}
-            </div>
+        <div class="mb-3">
+          <label class="form-label">Email address</label>
+          <input type="email" v-model="email" class="form-control" required>
+          <div v-if="message" class="alert alert-warning">
+            {{ message }}
           </div>
-          <div class="mb-3">
-            <label class="form-label">Your Name</label>
-            <input type="text" v-model="name" class="form-control" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" v-model="password" class="form-control">
-          </div>
-          <div class="mb-3">
-            <select class=" input is-large" v-model="role" required>
-              <option class="input is-large" value="user">User</option>
-              <option class="input is-large" value="manager">Manager</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-outline-primary">Sign up</button>
-        </form>
-      </div>
-    </div>
-  </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input type="text" v-model="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Age</label>
+          <input type="number" v-model="age" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Gender</label>
+          <select class="form-select" v-model="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Contact</label>
+          <input type="text" v-model="contact" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Medical History</label>
+          <textarea class="form-control" v-model="medical_history" type="text" id="medical_history" name="medical_history" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" v-model="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-outline-primary">Register</button>
+      </form>
+    </template>
+  </FormCompo>
 </template>
 
 <script>
 
+import FormCompo from '../components/FormCompo.vue';
+import home from '../utils/navigation.js';
 export default {
-  name: 'LoginPage',
+  name: 'RegisterPatientPage',
+  components: {
+    FormCompo
+  },
   data() {
     return {
+      username: '',
       email: '',
       name: '',
+      age: null,
+      gender: null,
+      contact: '',
+      medical_history: '',
       password: '',
-      role: '',
       message: ''
     }
   },
   methods: {
-    closeCard() {
-      if (this.$route.path != '/') {
-        this.$router.push('/')
-      }
+    home() {
+      home(this.$store, this.$route, this.$router);
     },
     async submitForm() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/signup', {
+        const response = await fetch('http://127.0.0.1:8000/register-patient/', {
           method: 'POST',
           mode: 'cors',
-          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
           },
           body: JSON.stringify({
+            "username": this.username,
             "email": this.email,
             "name": this.name,
-            "password": this.password,
-            "role": this.role
+            "age": this.age,
+            "gender": this.gender,
+            "contact": this.contact,
+            "medical_history": this.medical_history,
+            "password": this.password
           }),
         });
-        if (response.status === 201) {
+        if (response.ok) {
           const data = await response.json();
-          alert("User created successfully");
-          alert(data.message);
+          alert("Patient registered successfully");
           if (this.$route.path != '/login') {
             this.$router.push('/login')
-            this.closeCard()
+            this.home()
           }
-        } else if (response.status === 409) {
+        } else {
           const data = await response.json();
-          alert(data.msg);
+          throw new Error(data.error);
         }
       } catch (error) {
-        console.error(error);
-        alert("Something went wrong. Please try again later.");
+        alert(error);
       }
     },
   }
